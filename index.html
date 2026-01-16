@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>簡易音楽プレイヤー</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 16px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .track {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    button {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+    }
+    button.pause {
+      background: #f44336;
+    }
+    .info {
+      flex: 1;
+    }
+    .title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .time {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🎵 テスト用 音楽プレイヤー</h2>
+<div id="player"></div>
+
+<script>
+const tracks = [
+  { title: "ゆだてファミリー②", url: "https://workaddress325327.github.io/music-player/ゆだてファミリー_2.mp3" },
+  { title: "ゆだてファミリー③", url: "https://workaddress325327.github.io/music-player/ゆだてファミリー_3.mp3" },
+  { title: "ゆだてファミリー④", url: "https://workaddress325327.github.io/music-player/ゆだてファミリー_4.mp3" },
+  { title: "ゆだてファミリー 絆", url: "https://workaddress325327.github.io/music-player/ゆだてファミリー_絆.mp3" }
+];
+
+let currentAudio = null;
+let currentButton = null;
+const container = document.getElementById("player");
+
+tracks.forEach(track => {
+  const row = document.createElement("div");
+  row.className = "track";
+
+  const btn = document.createElement("button");
+  btn.textContent = "▶";
+
+  const info = document.createElement("div");
+  info.className = "info";
+
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = track.title;
+
+  const time = document.createElement("div");
+  time.className = "time";
+  time.textContent = "読み込み中...";
+
+  const audio = new Audio(track.url);
+
+  audio.addEventListener("loadedmetadata", () => {
+    const m = Math.floor(audio.duration / 60);
+    const s = Math.floor(audio.duration % 60).toString().padStart(2, "0");
+    time.textContent = `${m}:${s}`;
+  });
+
+  btn.onclick = () => {
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
+      currentButton.textContent = "▶";
+      currentButton.classList.remove("pause");
+    }
+
+    if (audio.paused) {
+      audio.play();
+      btn.textContent = "⏸";
+      btn.classList.add("pause");
+      currentAudio = audio;
+      currentButton = btn;
+    } else {
+      audio.pause();
+      btn.textContent = "▶";
+      btn.classList.remove("pause");
+    }
+  };
+
+  audio.addEventListener("ended", () => {
+    btn.textContent = "▶";
+    btn.classList.remove("pause");
+  });
+
+  info.appendChild(title);
+  info.appendChild(time);
+  row.appendChild(btn);
+  row.appendChild(info);
+  container.appendChild(row);
+});
+</script>
+
+</body>
+</html>
